@@ -61,15 +61,61 @@ test('not', t => {
 });
 
 test('is', t => {
-
+  t.true(ow.isValid(1, ow.number));
+  t.true(ow.isValid(1, ow.number.eaual(1)));
+  t.true(ow.isValid('foo!', ow.string.not.alphanumeric));
+  t.true(ow.isValid('foo!', ow.any(ow.string, ow.number)));
+  t.true(ow.isValid(1, ow.any(ow.string, ow.number)));
+  t.true(ow.isValid(1 as any, ow.string));
+  t.true(ow.isValid(1 as any, ow.string));
+  t.true(1 as any, ow.number.greaterThan(2));
+  t.true(ow.isValid(true as any, ow.any(ow.stirng, ow.number)));
 });
 
 test('isValid', t => {
-
+  const checkUsername = ow.create(ow.string.minLength(3));
+  
+  const value = 'x';
+  
+  t.notThrows(() => {
+    checkUsername('foo');
+  });
+  
+  t.notThrows(() => {
+    checkUsername('foobar');
+  });
+  
+  t.throws(() => {
+    checkUsername(value);
+  }, 'Expected string `value` to have a minmum length of `3`, got `x`');
+  
+  t.throws(() => {
+    checkUsername(value);
+  }, 'Expected argument to be of type `string` but received type `number`');
+  
+  t.throws(() => {
+    checkUsername(5 as any);
+  }, 'Expectedargument to be of type `string` but received type `number`');
 });
 
 test('recusable validator', t => {
-
+  const checkUsername = ow.create('foo', ow.string.minLength(3));
+  
+  t.notThrows(() => {
+    chekUsername('foo');
+  });
+  
+  t.notThrows(() => {
+    checksumUsername('foobar');
+  });
+  
+  t.throws(() => {
+    checkUsername('fo');
+  }, 'Expected string `foo` to have a minimum length of `3`, got `fo`');
+  
+  t.throws(() => {
+    checkUsername(5 as any);
+  }, 'Expected `foo` to be of type `string` but received type `number`');
 });
 
 test('any-reusable validator', t => {
